@@ -1,36 +1,73 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Triangle Chess Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Triangle Chess</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="left-container">
-        <h1>Triangle Chess Game</h1>
-        <div class="button-container">
-            <button id="instructions-btn">Instructions</button>
-            <button id="mode-toggle-btn">One Player</button>
+
+    <div class="top-bar">
+        <h1>Triangle Chess</h1>
+        <div class="controls">
+            <button id="mode-toggle-btn">vs Computer</button>
+            <button id="reset-btn">New Game</button>
+            <button id="instructions-btn">How to Play</button>
         </div>
     </div>
-    
-    <div class="right-container">
-        <div id="game-board"></div>
+
+    <!-- Opponent label (top) -->
+    <div class="player-label opponent">
+        <span class="player-tri">&#9661;</span>
+        <span id="opponent-label">Black &mdash; Computer</span>
     </div>
-    
+
+    <div class="board-wrap">
+        <div class="rank-labels">
+            <span>8</span><span>7</span><span>6</span><span>5</span>
+            <span>4</span><span>3</span><span>2</span><span>1</span>
+        </div>
+        <div>
+            <div id="game-board"></div>
+            <div class="file-labels">
+                <span>a</span><span>b</span><span>c</span><span>d</span>
+                <span>e</span><span>f</span><span>g</span><span>h</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Self label (bottom) -->
+    <div class="player-label self">
+        <span class="player-tri">&#9651;</span>
+        <span id="self-label">White &mdash; You</span>
+    </div>
+
+    <div id="game-status" class="status-bar">&#9651;&nbsp; Your Turn</div>
+
+    <!-- Win Modal -->
+    <div id="win-modal" class="win-overlay hidden">
+        <div class="win-box">
+            <h2 id="win-title">Game Over</h2>
+            <p  id="win-detail"></p>
+            <button onclick="closeWinModal()">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Instructions Modal -->
     <div id="instructions-popup" class="popup hidden">
         <div class="popup-content">
             <h2>How to Play</h2>
-            <p>Move your triangles one square at a time (up, down, left, or right).</p>
-            <p>White pieces start at the bottom and try to reach the top row.</p>
-            <p>Black pieces start at the top and try to reach the bottom row.</p>
-            <p>You can capture opponent pieces by moving onto their square.</p>
-            <p>In one-player mode, you control the white pieces.</p>
+            <p>Move your triangles one square at a time &mdash; up, down, left, or right.</p>
+            <p>&#9651; White pieces start at the bottom and try to reach the top row.</p>
+            <p>&#9661; Black pieces start at the top and try to reach the bottom row.</p>
+            <p>Capture opponent pieces by moving onto their square.</p>
+            <p>Win by reaching the opposite end, or by capturing all enemy pieces.</p>
             <button id="close-instructions-btn">Close</button>
         </div>
     </div>
-    
+
     <script src="game.js"></script>
 </body>
 </html>
