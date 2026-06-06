@@ -19,6 +19,10 @@ const _lastMovedTo = { white: null, black: null };
 let dragGhost     = null;
 let dragPointerId = null;
 
+// Swipe gesture state (start of each pointer-down)
+let swipeStartX = 0;
+let swipeStartY = 0;
+
 function initializeBoard() {
     board = Array.from({ length: boardSize }, () => Array(boardSize).fill(null));
     lastMoveFrom = null;
@@ -32,7 +36,6 @@ function initializeBoard() {
     _kbPieceIdx   = 0;
     selectedPiece = null;
     renderBoard();
-    autoSelectFirstPiece();
     updateGameStatus();
     updatePlayerLabels();
 }
@@ -148,6 +151,8 @@ function renderBoard() {
                         document.body.appendChild(dragGhost);
                         dragPointerId = e.pointerId;
                         isDragging    = true;
+                        swipeStartX   = e.clientX;
+                        swipeStartY   = e.clientY;
                     }, { passive: false });
                 }
 
@@ -175,16 +180,39 @@ document.addEventListener('pointerup', (e) => {
     const target = cellAt(e.clientX, e.clientY);
     removeGhost();
 
+    // Try normal drag-drop first (pointer landed on a different valid cell)
     if (target && selectedPiece) {
         const { row: toRow, col: toCol } = target;
-        if (toRow === selectedPiece.row && toCol === selectedPiece.col) {
-            // Dropped on same square — keep selected
-        } else if (isValidMove(selectedPiece.row, selectedPiece.col, toRow, toCol)) {
-            movePiece(selectedPiece.row, selectedPiece.col, toRow, toCol);
-            return;
-        } else {
-            selectedPiece = null;
+        if (toRow !== selectedPiece.row || toCol !== selectedPiece.col) {
+            if (isValidMove(selectedPiece.row, selectedPiece.col, toRow, toCol)) {
+                movePiece(selectedPiece.row, selectedPiece.col, toRow, toCol);
+                return;
+            }
         }
+    }
+
+    // Fallback: interpret gesture as a swipe direction (mobile-friendly)
+    if (selectedPiece) {
+        const dx = e.clientX - swipeStartX;
+        const dy = e.clientY - swipeStartY;
+        if (Math.hypot(dx, dy) >= 18) {
+            let dr = 0, dc = 0;
+            if (Math.abs(dx) > Math.abs(dy)) dc = dx > 0 ? 1 : -1;
+            else                             dr = dy > 0 ? 1 : -1;
+            const sr = selectedPiece.row + dr;
+            const sc = selectedPiece.col + dc;
+            if (sr >= 0 && sr < boardSize && sc >= 0 && sc < boardSize &&
+                isValidMove(selectedPiece.row, selectedPiece.col, sr, sc)) {
+                movePiece(selectedPiece.row, selectedPiece.col, sr, sc);
+                return;
+            }
+        }
+    }
+
+    // Dropped on same square with no meaningful swipe — keep selected
+    if (target && selectedPiece &&
+        target.row === selectedPiece.row && target.col === selectedPiece.col) {
+        // keep selected
     } else {
         selectedPiece = null;
     }
