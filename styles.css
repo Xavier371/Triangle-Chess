@@ -33,7 +33,7 @@ body {
     font-family: "Times New Roman", Times, serif;
     background: #2b2926;
     min-height: 100vh;
-    min-height: 100dvh;           /* avoids mobile address-bar overlap */
+    min-height: 100svh;           /* stable height — prevents board shift when browser chrome shows/hides */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -279,6 +279,8 @@ button:active { background: #0f1f4a; box-shadow: 0 1px 0 #0f1f4a; transform: tra
     border-radius: 4px;
     text-align: center;
     min-width: 200px;
+    white-space: nowrap;
+    line-height: 1.2;
     box-shadow: 0 2px 12px rgba(0,0,0,0.5);
     transition: background 0.25s, color 0.25s;
 }
